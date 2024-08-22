@@ -29,7 +29,6 @@ class _CountryListScreenState extends State<CountryListScreen> {
             child: _body(),
           ),
         ],
-
       ),
     );
   }
@@ -84,27 +83,35 @@ class _CountryListScreenState extends State<CountryListScreen> {
   }
 
   Widget _sortDropdown() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: DropdownButton<String>(
-          value: _sortBy,
-          isExpanded: true,
-          items: const [
-            DropdownMenuItem<String>(
-                value: 'name', child: Text('Sort by name')),
-            DropdownMenuItem<String>(
-                value: 'population', child: Text('Sort by population')),
-            DropdownMenuItem<String>(
-                value: 'capital', child: Text('Sort by capital')),
-          ],
-          onChanged: (String? newvalue) {
-            if (newvalue != null) {
-              setState(() {
-                _sortBy = newvalue;
-              });
-            }
-          }),
-    );
+    return Align(
+        alignment: Alignment.topRight, // Aligns the widget to the top right
+        //
+        child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(
+              width: 200,
+              child: DropdownButton<String>(
+                 
+                  borderRadius: BorderRadius.circular(8),
+                  padding: const EdgeInsets.all(8),
+                  value: _sortBy,
+                  isExpanded: true,
+                  items: const [
+                    DropdownMenuItem<String>(
+                        value: 'name', child: Text('Sort by name')),
+                    DropdownMenuItem<String>(
+                        value: 'population', child: Text('Sort by population')),
+                    DropdownMenuItem<String>(
+                        value: 'capital', child: Text('Sort by capital')),
+                  ],
+                  onChanged: (String? newvalue) {
+                    if (newvalue != null) {
+                      setState(() {
+                        _sortBy = newvalue;
+                      });
+                    }
+                  }),
+            )));
   }
 
   List<CountryModel> _sortCountries(List<CountryModel> countries) {
@@ -116,7 +123,7 @@ class _CountryListScreenState extends State<CountryListScreen> {
         countries.sort((a, b) => b.population.compareTo(a.population));
         break;
       case 'capital':
-        countries.sort((a, b) => a.capital.first.compareTo(b.capital.first));       
+        countries.sort((a, b) => a.capital.first.compareTo(b.capital.first));
         break;
     }
     return countries;
