@@ -4,10 +4,13 @@ import 'package:retrofit/retrofit.dart';
 
 part 'api_service.g.dart';
 
-@RestApi(baseUrl: "https://restcountries.com/v3.1/region/europe?fields=name,capital,flags,region,languages,population,capital")
-abstract class ApiService{
+@RestApi(baseUrl: "https://restcountries.com/v3.1")
+abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
 
-  @GET("")
-  Future<List<CountryModel>> getCountryInfo();
+  @GET("/region/europe")
+  Future<List<CountryModel>> getCountryInfo({
+    @Query("fields")
+    String fields = "name,capital,flags,region,languages,population",
+  });
 }

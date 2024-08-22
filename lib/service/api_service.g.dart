@@ -13,8 +13,7 @@ class _ApiService implements ApiService {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??=
-        'https://restcountries.com/v3.1/region/europe?fields=name,capital,flags,region,languages,population,capital';
+    baseUrl ??= 'https://restcountries.com/v3.1';
   }
 
   final Dio _dio;
@@ -22,9 +21,11 @@ class _ApiService implements ApiService {
   String? baseUrl;
 
   @override
-  Future<List<CountryModel>> getCountryInfo() async {
+  Future<List<CountryModel>> getCountryInfo(
+      {String fields =
+          "name,capital,flags,region,languages,population"}) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'fields': fields};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio
@@ -35,7 +36,7 @@ class _ApiService implements ApiService {
     )
             .compose(
               _dio.options,
-              '',
+              '/region/europe',
               queryParameters: queryParameters,
               data: _data,
             )

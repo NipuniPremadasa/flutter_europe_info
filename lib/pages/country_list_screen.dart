@@ -13,64 +13,82 @@ class CountryListScreen extends StatefulWidget {
 
 class _CountryListScreenState extends State<CountryListScreen> {
   String _sortBy = 'name';
+  late Future<List<CountryModel>> _countryFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _countryFuture = _fetchCountries();
+  }
+
+  Future<List<CountryModel>> _fetchCountries() async {
+    final apiService =
+        ApiService(Dio(BaseOptions(contentType: 'application/json')));
+    return apiService.getCountryInfo();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.lightBlue,
-        title: const Text('Flutter Europe Info'),
-        centerTitle: true,
-      ),
+      appBar: _buildAppBar(),
       body: Column(
         children: [
-          _sortDropdown(),
+          _buildSortDropdown(),
           Expanded(
-            child: _body(),
+            child: _buildCountryList(),
           ),
         ],
       ),
     );
   }
 
-  FutureBuilder _body() {
-    final apiService =
-        ApiService(Dio(BaseOptions(contentType: 'application/json')));
-    return FutureBuilder(
-        future: apiService.getCountryInfo(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData && snapshot.data != null) {
-              final List<CountryModel> countryInfo = snapshot.data;
-              return _country(_sortCountries(countryInfo));
-            } else {
-              return const Center(child: Text('No data found'));
-            }
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        });
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.lightBlue,
+      title: const Text('European Countries',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+      centerTitle: true,
+    );
   }
 
-  Widget _country(List<CountryModel> countryInfo) {
+  Widget _buildCountryList() {
+    return FutureBuilder<List<CountryModel>>(
+      future: _countryFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (snapshot.hasData) {
+          final countryInfo = snapshot.data!;
+          return _buildCountryListView(_sortCountries(countryInfo));
+        } else {
+          return const Center(child: Text('No data found'));
+        }
+      },
+    );
+  }
+
+  Widget _buildCountryListView(List<CountryModel> countryInfo) {
+    if (countryInfo.isEmpty) {
+      return const Center(
+        child: Text('No countries found'),
+      );
+    }
     return ListView.builder(
         itemCount: countryInfo.length,
         itemBuilder: (context, index) {
-          final CountryModel country = countryInfo[index];
+          final country = countryInfo[index];
           return ListTile(
             leading: Image.network(
-              country.flags.png, // Display the flag using the PNG URL
-              width: 50, // Set a fixed width for the flag image
-              height: 30, // Set a fixed height for the flag image
-              fit: BoxFit.cover, // Ensure the flag image fits the box
+              country.flags.png,
+              width: 50,
+              height: 30,
+              fit: BoxFit.cover,
             ),
             title: Text(country.name.common),
             subtitle: Text(country.capital.join(', ')),
-            // trailing: Text(country.population.toString()),
             onTap: () {
-              // Implement navigation to a CountryDetailScreen for more details
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -82,36 +100,33 @@ class _CountryListScreenState extends State<CountryListScreen> {
         });
   }
 
-  Widget _sortDropdown() {
-    return Align(
-        alignment: Alignment.topRight, // Aligns the widget to the top right
-        //
-        child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SizedBox(
-              width: 200,
-              child: DropdownButton<String>(
-                 
-                  borderRadius: BorderRadius.circular(8),
-                  padding: const EdgeInsets.all(8),
-                  value: _sortBy,
-                  isExpanded: true,
-                  items: const [
-                    DropdownMenuItem<String>(
-                        value: 'name', child: Text('Sort by name')),
-                    DropdownMenuItem<String>(
-                        value: 'population', child: Text('Sort by population')),
-                    DropdownMenuItem<String>(
-                        value: 'capital', child: Text('Sort by capital')),
-                  ],
-                  onChanged: (String? newvalue) {
-                    if (newvalue != null) {
-                      setState(() {
-                        _sortBy = newvalue;
-                      });
-                    }
-                  }),
-            )));
+  Widget _buildSortDropdown() {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.all(10),
+      width: 300,
+      child: DropdownButton<String>(
+          borderRadius: BorderRadius.circular(12),
+          padding: const EdgeInsets.all(12),
+          value: _sortBy,
+          isExpanded: true,
+          icon: const Icon(Icons.sort),
+          items: const [
+            DropdownMenuItem<String>(
+                value: 'name', child: Text('Sort by name')),
+            DropdownMenuItem<String>(
+                value: 'population', child: Text('Sort by population')),
+            DropdownMenuItem<String>(
+                value: 'capital', child: Text('Sort by capital')),
+          ],
+          onChanged: (String? newvalue) {
+            if (newvalue != null) {
+              setState(() {
+                _sortBy = newvalue;
+              });
+            }
+          }),
+    );
   }
 
   List<CountryModel> _sortCountries(List<CountryModel> countries) {

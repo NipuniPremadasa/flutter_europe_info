@@ -10,7 +10,9 @@ class CountryDetailedView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,
-        title: Text(country.name.common),
+        title: Text(country.name.common,
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: _body(),
@@ -21,20 +23,47 @@ class CountryDetailedView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
+        crossAxisAlignment:
+            CrossAxisAlignment.center, 
         children: [
-          Image.network(
-            country.flags.png,
-            width: 100,
-            height: 60,
-            fit: BoxFit.cover,
-          ),
+          _buildFlag(),
           const SizedBox(height: 16),
-          Text('Official Name: ${country.name.official}'),
-          Text('Capital: ${country.capital.join(', ')}'),
-          Text('Languages: ${country.languages!.keys.join(', ')}'),
-          Text('Population: ${country.population}'),
+          _buildDetails(),
         ],
       ),
+    );
+  }
+
+  Widget _buildFlag() {
+    return Container(
+      alignment: Alignment.center,
+      child: Image.network(
+        country.flags.png,
+        width: 150, 
+        height: 90,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  Widget _buildDetails() {
+    return Card(
+      elevation: 4,
+      child: Column(
+        children: [
+          _buildListTile('Official Name', country.name.official),
+          _buildListTile('Capital', country.capital.join(', ')),
+          _buildListTile('Languages', country.languages!.keys.join(', ')),
+          _buildListTile('Population', '${country.population}'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListTile(String title, String subtitle) {
+    return ListTile(
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: Text(subtitle),
     );
   }
 }
