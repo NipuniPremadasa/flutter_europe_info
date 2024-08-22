@@ -9,7 +9,7 @@ class CountryModel {
   @JsonKey(fromJson: _regionFromJson, toJson: _regionToJson)
   Region region;
   Map<String, String>? languages;
-  int? population;
+  int population;
 
   CountryModel({
     required this.flags,

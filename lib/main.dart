@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_europe_info/pages/home.dart';
+import 'package:flutter_europe_info/pages/country_list_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: Home(),
+      home: CountryListScreen(),
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter_europe_info/models/country_model.dart';
 import 'package:dio/dio.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'api_service.g.dart';

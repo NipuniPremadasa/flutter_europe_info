@@ -12,7 +12,9 @@ CountryModel _$CountryModelFromJson(Map<String, dynamic> json) => CountryModel(
       capital:
           (json['capital'] as List<dynamic>).map((e) => e as String).toList(),
       region: _regionFromJson(json['region'] as String),
-      languages: Map<String, String>.from(json['languages'] as Map),
+      languages: (json['languages'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as String),
+      ),
       population: (json['population'] as num).toInt(),
     );
 
