@@ -10,5 +10,5 @@ abstract class ApiService{
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
 
   @GET("")
-  Future<List<CountryModel>> getPosts();
+  Future<List<CountryModel>> getCountryInfo();
 }

@@ -6,9 +6,10 @@ class CountryModel {
   Flags flags;
   Name name;
   List<String> capital;
+  @JsonKey(fromJson: _regionFromJson, toJson: _regionToJson)
   Region region;
-  Map<String, String> languages;
-  int population;
+  Map<String, String>? languages;
+  int? population;
 
   CountryModel({
     required this.flags,
@@ -69,3 +70,17 @@ class NativeName {
 }
 
 enum Region { EUROPE }
+
+// Custom JSON serialization for Region enum
+Region _regionFromJson(String region) {
+  switch (region.toLowerCase()) {
+    case 'europe':
+      return Region.EUROPE;
+    default:
+      throw ArgumentError('Unknown region: $region');
+  }
+}
+
+String _regionToJson(Region region) {
+  return region.toString().split('.').last.toUpperCase();
+}

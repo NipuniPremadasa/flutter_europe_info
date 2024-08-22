@@ -22,7 +22,7 @@ class _ApiService implements ApiService {
   String? baseUrl;
 
   @override
-  Future<List<CountryModel>> getPosts() async {
+  Future<List<CountryModel>> getCountryInfo() async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};

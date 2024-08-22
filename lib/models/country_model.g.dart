@@ -11,7 +11,7 @@ CountryModel _$CountryModelFromJson(Map<String, dynamic> json) => CountryModel(
       name: Name.fromJson(json['name'] as Map<String, dynamic>),
       capital:
           (json['capital'] as List<dynamic>).map((e) => e as String).toList(),
-      region: $enumDecode(_$RegionEnumMap, json['region']),
+      region: _regionFromJson(json['region'] as String),
       languages: Map<String, String>.from(json['languages'] as Map),
       population: (json['population'] as num).toInt(),
     );
@@ -21,14 +21,10 @@ Map<String, dynamic> _$CountryModelToJson(CountryModel instance) =>
       'flags': instance.flags,
       'name': instance.name,
       'capital': instance.capital,
-      'region': _$RegionEnumMap[instance.region]!,
+      'region': _regionToJson(instance.region),
       'languages': instance.languages,
       'population': instance.population,
     };
-
-const _$RegionEnumMap = {
-  Region.EUROPE: 'EUROPE',
-};
 
 Flags _$FlagsFromJson(Map<String, dynamic> json) => Flags(
       png: json['png'] as String,
