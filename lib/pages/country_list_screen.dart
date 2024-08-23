@@ -31,13 +31,19 @@ class _CountryListScreenState extends State<CountryListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(),
-      body: Column(
-        children: [
-          _buildSortDropdown(),
-          Expanded(
-            child: _buildCountryList(),
-          ),
-        ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 600) {
+            // Mobile layout
+            return _buildMobileLayout();
+          } else if (constraints.maxWidth < 1200) {
+            // Tablet layout
+            return _buildTabletLayout();
+          } else {
+            // Desktop layout
+            return _buildDesktopLayout();
+          }
+        },
       ),
     );
   }
@@ -48,6 +54,54 @@ class _CountryListScreenState extends State<CountryListScreen> {
       title: const Text('European Countries',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       centerTitle: true,
+    );
+  }
+
+  Widget _buildMobileLayout() {
+    return Column(
+      children: [
+        _buildSortDropdown(),
+        Expanded(
+          child: _buildCountryList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTabletLayout() {
+    return Column(
+      children: [
+        
+        Align(
+        alignment: Alignment.centerRight,
+        child: Container(
+          width: 300, // Decreased width of the dropdown
+          child: _buildSortDropdown(),
+        ),
+      ),
+        Expanded(
+          flex: 3,
+          child: _buildCountryList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopLayout() {
+    return Column(
+      children: [
+        Align(
+        alignment: Alignment.centerRight,
+        child: Container(
+          width: 300, // Decreased width of the dropdown
+          child: _buildSortDropdown(),
+        ),
+      ),
+        Expanded(
+          flex: 4,
+          child: _buildCountryList(),
+        ),
+      ],
     );
   }
 
@@ -75,57 +129,78 @@ class _CountryListScreenState extends State<CountryListScreen> {
         child: Text('No countries found'),
       );
     }
-    return ListView.builder(
-        itemCount: countryInfo.length,
-        itemBuilder: (context, index) {
-          final country = countryInfo[index];
-          return ListTile(
-            leading: Image.network(
-              country.flags.png,
-              width: 50,
-              height: 30,
-              fit: BoxFit.cover,
-            ),
-            title: Text(country.name.common),
-            subtitle: Text(country.capital.join(', ')),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CountryDetailedView(country: country),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: _getCrossAxisCount(constraints.maxWidth),
+            childAspectRatio: 3,
+          ),
+          itemCount: countryInfo.length,
+          itemBuilder: (context, index) {
+            final country = countryInfo[index];
+            return Card(
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CountryDetailedView(country: country),
+                    ),
+                  );
+                },
+                child: ListTile(
+                  leading: Image.network(
+                    country.flags.png,
+                    width: 100,
+                    height: 60,
+                    fit: BoxFit.cover,
+                  ),
+                  title: Text(country.name.common,
+                      overflow: TextOverflow.ellipsis),
+                  subtitle: Text(country.capital.join(', '),
+                      overflow: TextOverflow.ellipsis),
                 ),
-              );
-            },
-          );
-        });
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  int _getCrossAxisCount(double width) {
+    if (width < 600) return 1;
+    if (width < 1200) return 2;
+    return 3;
   }
 
   Widget _buildSortDropdown() {
     return Container(
       padding: const EdgeInsets.all(10),
-      margin: const EdgeInsets.all(10),
-      width: 300,
+      margin: EdgeInsets.only(left:30, right: 30),
       child: DropdownButton<String>(
-          borderRadius: BorderRadius.circular(12),
-          padding: const EdgeInsets.all(12),
-          value: _sortBy,
-          isExpanded: true,
-          icon: const Icon(Icons.sort),
-          items: const [
-            DropdownMenuItem<String>(
-                value: 'name', child: Text('Sort by name')),
-            DropdownMenuItem<String>(
-                value: 'population', child: Text('Sort by population')),
-            DropdownMenuItem<String>(
-                value: 'capital', child: Text('Sort by capital')),
-          ],
-          onChanged: (String? newvalue) {
-            if (newvalue != null) {
-              setState(() {
-                _sortBy = newvalue;
-              });
-            }
-          }),
+        borderRadius: BorderRadius.circular(20),
+        padding: const EdgeInsets.all(12),
+        value: _sortBy,
+        isExpanded: true,
+        icon: const Icon(Icons.sort),
+        items: const [
+          DropdownMenuItem<String>(value: 'name', child: Text('Sort by name')),
+          DropdownMenuItem<String>(
+              value: 'population', child: Text('Sort by population')),
+          DropdownMenuItem<String>(
+              value: 'capital', child: Text('Sort by capital')),
+        ],
+        onChanged: (String? newvalue) {
+          if (newvalue != null) {
+            setState(() {
+              _sortBy = newvalue;
+            });
+          }
+        },
+      ),
     );
   }
 
