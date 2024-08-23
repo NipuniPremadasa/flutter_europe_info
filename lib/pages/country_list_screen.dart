@@ -23,9 +23,33 @@ class _CountryListScreenState extends State<CountryListScreen> {
 
 // Fetch countries from the API
   Future<List<CountryModel>> _fetchCountries() async {
-    final apiService =
-        ApiService(Dio(BaseOptions(contentType: 'application/json')));
-    return apiService.getCountryInfo();
+    try {
+      final apiService =
+          ApiService(Dio(BaseOptions(contentType: 'application/json')));
+      return apiService.getCountryInfo();
+    } on DioException catch (e) {
+      // Handle different Dio exceptions
+      if (e.response != null) {
+        // Server error with response
+        throw Exception('Server error: ${e.response?.statusCode}');
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        // Connection timeout
+        throw Exception(
+            'Connection timeout. Please check your internet connection.');
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        // Receive timeout
+        throw Exception('Receive timeout. Please try again later.');
+      } else if (e.type == DioExceptionType.badResponse) {
+        // Bad response
+        throw Exception('Bad response: ${e.message}');
+      } else {
+        // Other types of errors
+        throw Exception('An unexpected error occurred: ${e.message}');
+      }
+    } catch (e) {
+      // Catch any other exceptions
+      throw Exception('An unexpected error occurred: $e');
+    }
   }
 
   @override
