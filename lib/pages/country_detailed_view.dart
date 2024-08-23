@@ -11,6 +11,7 @@ class CountryDetailedView extends StatelessWidget {
       appBar: _buildAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
+          // Responsive layout based on screen width
           if (constraints.maxWidth < 600) {
             return _buildMobileLayout(context);
           } else if (constraints.maxWidth < 1200) {
@@ -23,6 +24,7 @@ class CountryDetailedView extends StatelessWidget {
     );
   }
 
+  // Builds the app bar with country name
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.lightBlue,
@@ -33,6 +35,7 @@ class CountryDetailedView extends StatelessWidget {
     );
   }
 
+  // Mobile layout - Flag and details in a vertical column
   Widget _buildMobileLayout(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -41,12 +44,13 @@ class CountryDetailedView extends StatelessWidget {
         children: [
           _buildFlag(),
           const SizedBox(height: 16),
-          _buildDetails(),
+          _buildCountryDetailsCard(),
         ],
       ),
     );
   }
 
+  // Tablet layout - Scrollable view with flag and details in a column
   Widget _buildTabletLayout(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
@@ -55,13 +59,14 @@ class CountryDetailedView extends StatelessWidget {
           children: [
             _buildFlag(),
             const SizedBox(height: 24),
-            _buildDetails(),
+            _buildCountryDetailsCard(),
           ],
         ),
       ),
     );
   }
 
+// Desktop layout - Scrollable view with flag and details side by side
   Widget _buildDesktopLayout(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
@@ -76,7 +81,7 @@ class CountryDetailedView extends StatelessWidget {
             const SizedBox(width: 32),
             Expanded(
               flex: 3,
-              child: _buildDetails(),
+              child: _buildCountryDetailsCard(),
             ),
           ],
         ),
@@ -84,6 +89,7 @@ class CountryDetailedView extends StatelessWidget {
     );
   }
 
+// Builds the country flag image
   Widget _buildFlag() {
     return Container(
       alignment: Alignment.center,
@@ -94,21 +100,24 @@ class CountryDetailedView extends StatelessWidget {
     );
   }
 
-  Widget _buildDetails() {
+// Builds a card with country details
+  Widget _buildCountryDetailsCard() {
     return Card(
       elevation: 4,
       child: Column(
         children: [
-          _buildDetailItem('Official Name', country.name.official),
-          _buildDetailItem('Capital', country.capital.join(', ')),
-          _buildDetailItem('Languages', country.languages!.keys.join(', ')),
-          _buildDetailItem('Population', '${country.population}'),
+          _buildCountryDetailItem('Official Name', country.name.official),
+          _buildCountryDetailItem('Capital', country.capital.join(', ')),
+          _buildCountryDetailItem(
+              'Languages', country.languages!.keys.join(', ')),
+          _buildCountryDetailItem('Population', '${country.population}'),
         ],
       ),
     );
   }
 
-  Widget _buildDetailItem(String title, String content) {
+// Builds a single country detail item with title and content
+  Widget _buildCountryDetailItem(String title, String content) {
     return ListTile(
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
       subtitle: Text(content),

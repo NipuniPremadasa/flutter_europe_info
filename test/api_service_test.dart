@@ -9,6 +9,7 @@ void main() {
   late DioAdapter dioAdapter;
   late ApiService apiService;
 
+  // Set up the Dio and ApiService instances before each test
   setUp(() {
     dio = Dio(BaseOptions(baseUrl: 'https://restcountries.com/v3.1'));
     dioAdapter = DioAdapter(dio: dio);
@@ -17,7 +18,7 @@ void main() {
 
   group('ApiService Tests', () {
     test('getCountryInfo returns list of CountryModel', () async {
-      // Arrange
+      // Arrange - Set up mock response data
       final responseData = [
         {
           "flags": {
@@ -42,7 +43,7 @@ void main() {
           "population": 83240525
         }
       ];
-
+      // Configure the DioAdapter to return the mock data for the given endpoint
       dioAdapter.onGet(
         '/region/europe',
         (server) => server.reply(200, responseData),
@@ -51,20 +52,10 @@ void main() {
         },
       );
 
-      // Act
+      // Act - Call the getCountryInfo method
       final result = await apiService.getCountryInfo();
 
-      print('Result:');
-      for (var country in result) {
-        print('Country: ${country.name.common}');
-        print('Capital: ${country.capital.first}');
-        print('Region: ${country.region}');
-        print('Population: ${country.population}');
-        print('Languages: ${country.languages}');
-        print('---');
-      }
-
-      // Assert
+      // Assert - Verify the results
       expect(result, isA<List<CountryModel>>());
       expect(result.length, 1);
       expect(result[0].name.common, 'Germany');

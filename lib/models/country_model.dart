@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'country_model.g.dart';
 
+// Represents a country with its details
 @JsonSerializable()
 class CountryModel {
   Flags flags;
@@ -25,6 +26,7 @@ class CountryModel {
   Map<String, dynamic> toJson() => _$CountryModelToJson(this);
 }
 
+// Contains flag details of a country
 @JsonSerializable()
 class Flags {
   String png;
@@ -40,6 +42,7 @@ class Flags {
   Map<String, dynamic> toJson() => _$FlagsToJson(this);
 }
 
+// Contains name details of a country
 @JsonSerializable()
 class Name {
   String common;
@@ -55,6 +58,7 @@ class Name {
   Map<String, dynamic> toJson() => _$NameToJson(this);
 }
 
+// Represents native names of a country
 @JsonSerializable()
 class NativeName {
   String official;

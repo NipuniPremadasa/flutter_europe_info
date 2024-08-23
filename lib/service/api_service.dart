@@ -8,6 +8,7 @@ part 'api_service.g.dart';
 abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
 
+// Fetch information about countries in Europe
   @GET("/region/europe")
   Future<List<CountryModel>> getCountryInfo({
     @Query("fields")

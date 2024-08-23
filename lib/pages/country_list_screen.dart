@@ -12,7 +12,7 @@ class CountryListScreen extends StatefulWidget {
 }
 
 class _CountryListScreenState extends State<CountryListScreen> {
-  String _sortBy = 'name';
+  String _sortBy = 'name'; // Default sorting option
   late Future<List<CountryModel>> _countryFuture;
 
   @override
@@ -21,6 +21,7 @@ class _CountryListScreenState extends State<CountryListScreen> {
     _countryFuture = _fetchCountries();
   }
 
+// Fetch countries from the API
   Future<List<CountryModel>> _fetchCountries() async {
     final apiService =
         ApiService(Dio(BaseOptions(contentType: 'application/json')));
@@ -33,6 +34,7 @@ class _CountryListScreenState extends State<CountryListScreen> {
       appBar: _buildAppBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
+          // Responsive layout based on screen width
           if (constraints.maxWidth < 600) {
             // Mobile layout
             return _buildMobileLayout();
@@ -48,6 +50,7 @@ class _CountryListScreenState extends State<CountryListScreen> {
     );
   }
 
+  // Build the app bar
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.lightBlue,
@@ -57,6 +60,7 @@ class _CountryListScreenState extends State<CountryListScreen> {
     );
   }
 
+// Mobile layout
   Widget _buildMobileLayout() {
     return Column(
       children: [
@@ -68,17 +72,17 @@ class _CountryListScreenState extends State<CountryListScreen> {
     );
   }
 
+// Mobile layout
   Widget _buildTabletLayout() {
     return Column(
       children: [
-        
         Align(
-        alignment: Alignment.centerRight,
-        child: Container(
-          width: 300, // Decreased width of the dropdown
-          child: _buildSortDropdown(),
+          alignment: Alignment.centerRight,
+          child: SizedBox(
+            width: 300, // Decreased width of the dropdown
+            child: _buildSortDropdown(),
+          ),
         ),
-      ),
         Expanded(
           flex: 3,
           child: _buildCountryList(),
@@ -87,16 +91,17 @@ class _CountryListScreenState extends State<CountryListScreen> {
     );
   }
 
+  // Desktop layout
   Widget _buildDesktopLayout() {
     return Column(
       children: [
         Align(
-        alignment: Alignment.centerRight,
-        child: Container(
-          width: 300, // Decreased width of the dropdown
-          child: _buildSortDropdown(),
+          alignment: Alignment.centerRight,
+          child: SizedBox(
+            width: 300, // Decreased width of the dropdown
+            child: _buildSortDropdown(),
+          ),
         ),
-      ),
         Expanded(
           flex: 4,
           child: _buildCountryList(),
@@ -105,6 +110,7 @@ class _CountryListScreenState extends State<CountryListScreen> {
     );
   }
 
+  // Build the country list using FutureBuilder
   Widget _buildCountryList() {
     return FutureBuilder<List<CountryModel>>(
       future: _countryFuture,
@@ -123,6 +129,7 @@ class _CountryListScreenState extends State<CountryListScreen> {
     );
   }
 
+// Build the GridView for country list
   Widget _buildCountryListView(List<CountryModel> countryInfo) {
     if (countryInfo.isEmpty) {
       return const Center(
@@ -170,16 +177,18 @@ class _CountryListScreenState extends State<CountryListScreen> {
     );
   }
 
+// Determine the number of columns based on screen width
   int _getCrossAxisCount(double width) {
     if (width < 600) return 1;
     if (width < 1200) return 2;
     return 3;
   }
 
+// Build the sorting dropdown
   Widget _buildSortDropdown() {
     return Container(
       padding: const EdgeInsets.all(10),
-      margin: EdgeInsets.only(left:30, right: 30),
+      margin: const EdgeInsets.only(left: 30, right: 30),
       child: DropdownButton<String>(
         borderRadius: BorderRadius.circular(20),
         padding: const EdgeInsets.all(12),
@@ -204,6 +213,7 @@ class _CountryListScreenState extends State<CountryListScreen> {
     );
   }
 
+// Sort countries based on selected criteria
   List<CountryModel> _sortCountries(List<CountryModel> countries) {
     switch (_sortBy) {
       case 'name':
